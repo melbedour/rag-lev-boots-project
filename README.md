@@ -97,6 +97,25 @@ Ultimately, you need to implement the two functions below
 - Embed chunks (Gemini embeddings or another embedding model)
 - Store chunks + embeddings into the `knowledge_base` table
 
+<span style="color:#fa5252">**IMPORTANT NOTE** on embeddings</span>
+
+- The project already setup the `knowledge_base` table for you
+- This table includes one of two columns in which you can store your embeddings:
+  - `embeddings_768`
+  - `embeddings_1536`
+- These numbers indicate the embedding dimensions (i.e how long the embeddings
+  array is; how many parameters in has)
+- You must choose _one_ and stick with it for the entire project (either 768
+  _or_ 1536)
+- The reason the project offers both is because different LLMs offer different
+  defaults, though you can customize the dimension output in your embedding
+  request
+- In theory, more embeddings = more precision (but slower speed with higher
+  costs), in practice, smaller embeddings can be fine for non-complex tasks (and
+  are faster + cheaper)
+
+<span style="color:#fa5252">**END of IMPORTANT NOTE** on embeddings</span>
+
 #### `ask(userQuestion)`
 
 - Embed the question
@@ -125,4 +144,3 @@ Ultimately, you need to implement the two functions below
 
 **Not hallucinating**
 <img width="988" height="418" alt="image" src="https://github.com/user-attachments/assets/939fc8d5-6cc4-402d-9b17-d050afc4876d" />
-

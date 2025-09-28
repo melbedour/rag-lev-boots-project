@@ -117,3 +117,12 @@ Ultimately, you need to implement the two functions below
    embedded data so you can save tokens
 
 3. This is a big project, but it's 100% feasible. You've got this =]
+
+## Result
+
+**Answering a question correctly**
+<img width="990" height="427" alt="image" src="https://github.com/user-attachments/assets/cc8563ed-6d7c-4254-af83-e76ee18c8351" />
+
+**Not hallucinating**
+<img width="988" height="418" alt="image" src="https://github.com/user-attachments/assets/939fc8d5-6cc4-402d-9b17-d050afc4876d" />
+

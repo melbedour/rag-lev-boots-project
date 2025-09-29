@@ -2,6 +2,7 @@
 
 - Ensure `concurrently` is installed (`npm install concurrently --save-dev`)
 - Run `npm i`
+- Create a `.env` file with your `DATABSE_URL` connection string
 - Run `npm run dev` - runs the front and backend concurrently with hot module
   and auto server reload
 - See the UI at [http://localhost:5173/](http://localhost:5173/)
@@ -19,8 +20,8 @@ allows a user to ask and learn about these new boots.
 
 The UI is already set up for you: you type a question, press enter, and it sends
 it to the backend. Your task is to implement the entire RAG system on the
-backend: from loading and embedding the resources, to retrieve the knowledge and
-generate an answer.
+backend: from loading and embedding the resources, to retrieving the knowledge
+and generating an answer.
 
 Your entry point is in `ragService.ts`
 
@@ -39,14 +40,26 @@ Create a `.env` file in the project root with DATABASE_URL and GEMINI_API_KEY
 
 ### Data Sources
 
-You will populate your knowledge_base table with the following data:
+When you run your server for the first time, it will automatically create a
+`knowledge_base` table for you (assuming your connection string to your DB is
+valid). You should familiarize yourself with the model in
+`models/KnowledgeBase.ts`
+
+_Note_: This table is fine for this project, but in reality you would likely
+want to split into multiple tables that are joined (e.g one for the chunks, one
+for the embeddings). For simplicity, we have everything in one table
+
+Your first goal should be to populate your `knowledge_base` table with the
+following data:
 
 - **3 PDFs**
   - All the PDFs are in the `/knowledge_pdfs` directory; read directly from
-    there
-  - `OpEd - A Revolution at Our Feet.pdf`
-  - `Research Paper - Gravitational Reversal Physics.pdf`
-  - `White Paper - The Development of Localized Gravity Reversal Technology.pdf`
+    there:
+    - `OpEd - A Revolution at Our Feet.pdf`
+    - `Research Paper - Gravitational Reversal Physics.pdf`
+    - `White Paper - The Development of Localized Gravity Reversal Technology.pdf`
+  - You can `npm install pdf-parse` (see
+    [here](https://www.npmjs.com/package/pdf-parse)) to read the PDFs easily
 - **5 articles**
   - All the articles are accessible in markdown format via this endpoint:
     `https://gist.githubusercontent.com/JonaCodes/394d01021d1be03c9fe98cd9696f5cf3/raw/ARTICLE_ID`
@@ -94,7 +107,9 @@ Ultimately, you need to implement the two functions below
 
 - Fetch all sources
 - Chunk content into manageable pieces (400 words)
-- Embed chunks (Gemini embeddings or another embedding model)
+- Embed each chunks
+  ([Gemini embeddings](https://ai.google.dev/gemini-api/docs/embeddings) or
+  another embedding model)
 - Store chunks + embeddings into the `knowledge_base` table
 
 <span style="color:#fa5252">**IMPORTANT NOTE** on embeddings</span>
@@ -104,7 +119,7 @@ Ultimately, you need to implement the two functions below
   - `embeddings_768`
   - `embeddings_1536`
 - These numbers indicate the embedding dimensions (i.e how long the embeddings
-  array is; how many parameters in has)
+  array is, i.e how many parameters in has)
 - You must choose _one_ and stick with it for the entire project (either 768
   _or_ 1536)
 - The reason the project offers both is because different LLMs offer different
@@ -118,7 +133,7 @@ Ultimately, you need to implement the two functions below
 
 #### `ask(userQuestion)`
 
-- Embed the question
+- Embed (you must use the same embedding model) the question
 - Run a similarity search on the DB
 - Construct a prompt using the retrieved chunks
 - Ask the LLM to answer the user question **based only on retrieved content**

@@ -62,8 +62,8 @@ following data:
     [here](https://www.npmjs.com/package/pdf-parse)) to read the PDFs easily
 - **5 articles**
   - All the articles are accessible in markdown format via this endpoint:
-    `https://gist.githubusercontent.com/JonaCodes/394d01021d1be03c9fe98cd9696f5cf3/raw/ARTICLE_ID`
-  - You'll have to replace ARTICLE_ID with the following IDs:
+    `https://gist.githubusercontent.com/JonaCodes/394d01021d1be03c9fe98cd9696f5cf3/raw/article-X_ARTICLE_ID.md`
+  - You'll have to replace X with the numbers 1-5, and ARTICLE_ID with the following IDs:
     `[military-deployment-report, urban-commuting, hover-polo, warehousing, consumer-safety]`
 - **Slack API** (simulated API with pagination + rate limiting)
   - This API limits how much data it returns per query, so you will have to

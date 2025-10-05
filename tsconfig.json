@@ -13,7 +13,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "typeRoots": ["./node_modules/@types", "./server/types"]
   },
-  "include": ["public/src", "server/**/*.ts"]
+  "include": ["public/src", "server/**/*.ts", "server/**/*.d.ts"]
 }

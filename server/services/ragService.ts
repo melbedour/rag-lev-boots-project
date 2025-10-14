@@ -3,7 +3,8 @@
 import { AIHandler } from "../controllers/aiHandler";
 import { articleHandler, pdfHandler, slackHandler } from "../controllers/resourcesHandler";
 import sequelize from "../config/database";
-import { QueryTypes } from "sequelize";
+import {  QueryTypes } from "sequelize";
+import { Conversations } from "./conversation";
 
 type RetrievedChunk = {
   id: number;
@@ -27,7 +28,7 @@ export const loadAllData = async () => {
   slackHandler();
 };
 
-export const ask = async (userQuestion: string): Promise<string> => {
+export const ask = async (userQuestion: string, conversationId: string = 'default'): Promise<string> => {
   // Embed the user question for both dimensions
   const [emb768, emb1536] = await Promise.all([
     AIHandler.getEmbeddings(userQuestion, 768),
@@ -41,6 +42,7 @@ export const ask = async (userQuestion: string): Promise<string> => {
   const TOP_K = 5;
 
   // Similarity search using pgvector for each embedding column
+
   const results768 = await sequelize.query<RetrievedChunk>(
     `
       SELECT id, source, source_id, chunk_index, chunk_content,
@@ -93,7 +95,11 @@ export const ask = async (userQuestion: string): Promise<string> => {
     .map((r, i) => `-- Chunk ${i + 1} | ${r.source}#${r.source_id} (d=${r.distance.toFixed(4)})\n${r.chunk_content}`)
     .join("\n\n");
 
-  // Ask the AI to answer using only retrieved content
-  const answer = await AIHandler.generateAnswer(context, userQuestion);
+  // Ask the AI to answer using retrieved content + conversation history
+  const history = Conversations.getHistory(conversationId);
+  const answer = await AIHandler.generateAnswerWithHistory(context, userQuestion, history);
+
+  // Save this turn (trimmed to last 10 rounds inside the store)
+  Conversations.addTurn(conversationId, userQuestion, answer);
   return answer;
 };

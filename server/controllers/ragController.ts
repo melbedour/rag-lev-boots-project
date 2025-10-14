@@ -18,7 +18,7 @@ export const askQuestion = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { userQuestion } = req.body || {};
+    const { userQuestion, conversationId } = req.body || {};
     if (!userQuestion) {
       res.status(400).json({
         answer: '',
@@ -27,7 +27,7 @@ export const askQuestion = async (
       return;
     }
 
-    const answer = await ask(userQuestion);
+    const answer = await ask(userQuestion, conversationId || 'default');
     res.status(200).json({ answer });
   } catch (error) {
     res.status(500).json({

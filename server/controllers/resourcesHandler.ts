@@ -4,6 +4,7 @@ import { pdfToText } from 'pdf-ts';
 import KnowledgeBase from '../models/KnowledgeBase';
 import { log } from 'node:console';
 import { GoogleGenAI } from "@google/genai";
+import { AIHandler } from './aiHandler';
 
 const WORDS_PER_CHUNK = 400;
 const PDF_EXTENSION = '.pdf';
@@ -51,8 +52,8 @@ export const pdfHandler = async (): Promise<KnowledgeBase[]> => {
         source_id: `${path.parse(entry).name}-${chunkNumber}`,
         chunk_index: chunkNumber,
         chunk_content: chunkContent,
-        embeddings_768: await getEmbeddings(chunkContent, 768),
-        embeddings_1536: await getEmbeddings(chunkContent, 1536)
+        embeddings_768: await AIHandler.getEmbeddings(chunkContent, 768),
+        embeddings_1536: await AIHandler.getEmbeddings(chunkContent, 1536)
       });
     }
   }
@@ -88,8 +89,8 @@ export const articleHandler = async (): Promise<KnowledgeBase[]> => {
         source_id: `${path.parse(articles[i]).name}-${chunkNumber}`,
         chunk_index: chunkNumber,
         chunk_content: chunkContent,
-        embeddings_768: await getEmbeddings(chunkContent, 768),
-        embeddings_1536: await getEmbeddings(chunkContent, 1536)
+        embeddings_768: await AIHandler.getEmbeddings(chunkContent, 768),
+        embeddings_1536: await AIHandler.getEmbeddings(chunkContent, 1536)
       });
     }
   }
@@ -125,8 +126,8 @@ export const slackHandler = async (): Promise<KnowledgeBase[]> => {
           source_id: `${(channels[i])}-${index}`,
           chunk_index: index,
           chunk_content: item.text,
-          embeddings_768: await getEmbeddings(item.text, 768),
-          embeddings_1536: await getEmbeddings(item.text, 1536)
+          embeddings_768: await AIHandler.getEmbeddings(item.text, 768),
+          embeddings_1536: await AIHandler.getEmbeddings(item.text, 1536)
         };
         records.push(entry)
         await new Promise(f => setTimeout(f, 4000));
@@ -147,13 +148,3 @@ export const slackHandler = async (): Promise<KnowledgeBase[]> => {
 
   return []
 };
-const getEmbeddings = async (content: string, outputDimensionality: number): Promise<number[]> => {
-  const ai = new GoogleGenAI({});
-  const response = await ai.models.embedContent({
-    model: 'gemini-embedding-001',
-    contents: content,
-    config: { outputDimensionality: outputDimensionality },
-
-  });
-  return response.embeddings![0].values!
-}
